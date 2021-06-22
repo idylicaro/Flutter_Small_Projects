@@ -65,6 +65,5 @@ class AuthTypeSelector extends StatelessWidget {
       );
     }
   }
-  
-}
+
 
