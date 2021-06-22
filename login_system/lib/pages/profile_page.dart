@@ -1,75 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
-
-/// Entrypoint example for various sign-in flows with Firebase.
-class SignInPage extends StatefulWidget {
-  /// The page title.
-  final String title = 'Sign In & Out';
-
-  @override
-  State<StatefulWidget> createState() => _SignInPageState();
-}
-
-class _SignInPageState extends State<SignInPage> {
-  User user;
-
-  @override
-  void initState() {
-    _auth.userChanges().listen((event) => setState(() => user = event));
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: <Widget>[
-          Builder(builder: (BuildContext context) {
-            return FlatButton(
-              textColor: Theme.of(context).buttonColor,
-              onPressed: () async {
-                final User user = _auth.currentUser;
-                if (user == null) {
-                  Scaffold.of(context).showSnackBar(const SnackBar(
-                    content: Text('No one has signed in.'),
-                  ));
-                  return;
-                }
-                await _signOut();
-
-                final String uid = user.uid;
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text('$uid has successfully signed out.'),
-                ));
-              },
-              child: const Text('Sign out'),
-            );
-          })
-        ],
-      ),
-      body: Builder(builder: (BuildContext context) {
-        return ListView(
-          padding: const EdgeInsets.all(8),
-          children: <Widget>[
-            _UserInfoCard(user),
-            _OtherProvidersSignInSection(),
-          ],
-        );
-      }),
-    );
-  }
-
-  // Example code for sign out.
-  Future<void> _signOut() async {
-    await _auth.signOut();
-  }
-}
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class _UserInfoCard extends StatefulWidget {
   final User user;
@@ -119,14 +50,14 @@ class _UserInfoCardState extends State<_UserInfoCard> {
             Text(widget.user == null
                 ? 'Not signed in'
                 : '${widget.user.isAnonymous ? 'User is anonymous\n\n' : ''}'
-                    'Email: ${widget.user.email} (verified: ${widget.user.emailVerified})\n\n'
-                    'Phone number: ${widget.user.phoneNumber}\n\n'
-                    'Name: ${widget.user.displayName}\n\n\n'
-                    'ID: ${widget.user.uid}\n\n'
-                    'Tenant ID: ${widget.user.tenantId}\n\n'
-                    'Refresh token: ${widget.user.refreshToken}\n\n\n'
-                    'Created: ${widget.user.metadata.creationTime.toString()}\n\n'
-                    'Last login: ${widget.user.metadata.lastSignInTime}\n\n'),
+                'Email: ${widget.user.email} (verified: ${widget.user.emailVerified})\n\n'
+                'Phone number: ${widget.user.phoneNumber}\n\n'
+                'Name: ${widget.user.displayName}\n\n\n'
+                'ID: ${widget.user.uid}\n\n'
+                'Tenant ID: ${widget.user.tenantId}\n\n'
+                'Refresh token: ${widget.user.refreshToken}\n\n\n'
+                'Created: ${widget.user.metadata.creationTime.toString()}\n\n'
+                'Last login: ${widget.user.metadata.lastSignInTime}\n\n'),
             if (widget.user != null)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -148,16 +79,16 @@ class _UserInfoCardState extends State<_UserInfoCard> {
                         child: ListTile(
                           leading: provider.photoURL == null
                               ? IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  onPressed: () =>
-                                      widget.user.unlink(provider.providerId))
+                              icon: const Icon(Icons.remove),
+                              onPressed: () =>
+                                  widget.user.unlink(provider.providerId))
                               : Image.network(provider.photoURL),
                           title: Text(provider.providerId),
                           subtitle: Text(
                               "${provider.uid == null ? "" : "ID: ${provider.uid}\n"}"
-                              "${provider.email == null ? "" : "Email: ${provider.email}\n"}"
-                              "${provider.phoneNumber == null ? "" : "Phone number: ${provider.phoneNumber}\n"}"
-                              "${provider.displayName == null ? "" : "Name: ${provider.displayName}\n"}"),
+                                  "${provider.email == null ? "" : "Email: ${provider.email}\n"}"
+                                  "${provider.phoneNumber == null ? "" : "Phone number: ${provider.phoneNumber}\n"}"
+                                  "${provider.displayName == null ? "" : "Name: ${provider.displayName}\n"}"),
                         ),
                       ),
                     ),
@@ -270,78 +201,3 @@ class _UpdateUserDialogState extends State<UpdateUserDialog> {
     super.dispose();
   }
 }
-
-class _OtherProvidersSignInSection extends StatefulWidget {
-  _OtherProvidersSignInSection();
-
-  @override
-  State<StatefulWidget> createState() => _OtherProvidersSignInSectionState();
-}
-
-class _OtherProvidersSignInSectionState
-    extends State<_OtherProvidersSignInSection> {
-  final TextEditingController _tokenController = TextEditingController();
-  final TextEditingController _tokenSecretController = TextEditingController();
-
-  int _selection = 0;
-  bool _showAuthSecretTextField = false;
-  bool _showProviderTokenField = true;
-  String _provider = 'GitHub';
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                padding: const EdgeInsets.only(top: 16),
-                alignment: Alignment.center,
-                child: SignInButton(
-                  Buttons.GoogleDark,
-                  text: 'Sign In',
-                  onPressed: () async {
-                    _signInWithGoogle();
-                  },
-                ),
-              ),
-            ],
-          )),
-    );
-  }
-
-  //Example code of how to sign in with Google.
-  Future<void> _signInWithGoogle() async {
-    try {
-      UserCredential userCredential;
-
-      if (kIsWeb) {
-        var googleProvider = GoogleAuthProvider();
-        userCredential = await _auth.signInWithPopup(googleProvider);
-      } else {
-        final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final googleAuthCredential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-        userCredential = await _auth.signInWithCredential(googleAuthCredential);
-      }
-
-      final user = userCredential.user;
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text('Sign In ${user.uid} with Google'),
-      ));
-    } catch (e) {
-      print(e);
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to sign in with Google: $e'),
-        ),
-      );
-    }
-  }
-} 
