@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_builder.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:login_system/pages/register_page.dart';
+
 import 'package:login_system/pages/profile_page.dart';
 
 
@@ -40,14 +40,6 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-              SignInButtonBuilder(
-                height: 60,
-                fontSize: 20,
-                icon: Icons.person_add,
-                backgroundColor: Colors.indigo,
-                text: 'Registration',
-                onPressed: () => _pushPage(context, RegisterPage()),
-              ),
               Divider(),
               SignInButtonBuilder(
                   height: 60,
