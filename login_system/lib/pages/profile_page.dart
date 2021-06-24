@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class UserInfoCard extends StatefulWidget {
   final User user;
@@ -124,8 +125,8 @@ class UserInfoCardState extends State<UserInfoCard> {
             Center(
                 child:ElevatedButton(
                   onPressed: () async {
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.pop(context);
+                    await singOut(context);
+
                   },
                   child: const Text('SingOut'),
                 ),
@@ -135,6 +136,12 @@ class UserInfoCardState extends State<UserInfoCard> {
       ),
     );
   }
+}
+
+Future<void> singOut(context) async{
+  await GoogleSignIn().disconnect();
+  await FirebaseAuth.instance.signOut();
+  Navigator.pop(context);
 }
 
 class UpdateUserDialog extends StatefulWidget {

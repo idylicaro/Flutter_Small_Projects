@@ -59,7 +59,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     ));
   }
-
   Future<void> _signInWithGoogle() async {
     try {
       UserCredential userCredential;
