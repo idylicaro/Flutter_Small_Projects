@@ -16,7 +16,17 @@ class UserInfoCard extends StatefulWidget {
 class UserInfoCardState extends State<UserInfoCard> {
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue,Colors.indigo],
+            stops: [0.1,0.4],
+            begin: Alignment.bottomLeft,
+            end: Alignment.topRight,
+          )
+      ),
       child: Padding(
         padding: const EdgeInsets.all(30),
         child: Column(

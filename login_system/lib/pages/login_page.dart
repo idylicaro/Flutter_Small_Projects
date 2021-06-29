@@ -2,7 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_builder.dart';
+import 'package:getwidget/getwidget.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+
 
 import 'package:login_system/pages/profile_page.dart';
 
@@ -32,32 +35,46 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Card(
-          child: Padding(
-          padding: EdgeInsets.all(10),
-            child: Center(
-              child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-              Divider(),
-              SignInButtonBuilder(
-                  height: 60,
-                  fontSize: 20,
-                  icon: Icons.verified_user,
-                  backgroundColor: Colors.orange,
-                  text: 'Sign In',
-                  onPressed: () async {
-                    await _signInWithGoogle();
-                    final User user = _auth.currentUser;
-                    if (user != null) _pushPage(context ,UserInfoCard(user));
-                  }),
-
-    ],
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
+        body: Container(
+            width: double.infinity,
+            height: double.infinity,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [Colors.indigo, Colors.blue],
+                  stops: [0.2,0.6],
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.topRight,
+              )
           ),
-        ),
-      ),
-    ));
+          child:  Padding(
+              padding: EdgeInsets.all(10),
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Divider(),
+                    SignInButtonBuilder(
+                        height: 60,
+                        fontSize: 18,
+                        icon: Icons.login,
+                        backgroundColor: Colors.green,
+                        text: "Sign In With Google",
+                        onPressed: () async {
+                          await _signInWithGoogle();
+                          final User user = _auth.currentUser;
+                          if (user != null) _pushPage(context ,UserInfoCard(user));
+                        }),
+
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
   }
   Future<void> _signInWithGoogle() async {
     try {
