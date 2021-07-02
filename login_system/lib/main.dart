@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import '/pages/login_page.dart';
+import 'package:login_system/route_generator.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Sign In',
       theme: ThemeData.dark(),
       home: LoginPage(),
+      onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
 }

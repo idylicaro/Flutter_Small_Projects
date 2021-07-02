@@ -92,5 +92,5 @@ class UserInfoCardState extends State<UserInfoCard> {
 Future<void> singOut(context) async {
   await GoogleSignIn().disconnect();
   await FirebaseAuth.instance.signOut();
-  Navigator.pop(context);
+  Navigator.of(context).pop();
 }
